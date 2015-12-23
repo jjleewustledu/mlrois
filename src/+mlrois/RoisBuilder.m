@@ -43,8 +43,8 @@ classdef RoisBuilder < mlmr.MRAlignmentBuilder
     
 	methods
         function        atlas2mask(this, atlas, mask)
-            atlas = imcast(atlas, 'mlfourd.ImagingContext');
-            mask  = imcast(mask,  'mlfourd.ImagingContext');
+            atlas = mlfourd.ImagingContext(atlas);
+            mask  = mlfourd.ImagingContext(mask);
             this.product = atlas;
             vtor = mlfsl.FnirtVisitor;
             this = vtor.visitRoisBuilder2applywarp(this);

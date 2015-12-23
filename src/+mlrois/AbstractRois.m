@@ -116,7 +116,7 @@ classdef AbstractRois < mlrois.RoisInterface
             ic.nifti.save;
         end
         function ic   = makeImageAsNeeded(this, imobj, immaker)
-            ic = imcast(imobj, 'mlfourd.ImagingContext');
+            ic = mlfourd.ImagingContext(imobj);
             if (~lexist(ic.fqfilename, 'file'))
                 assert(ismethod(this, immaker));
                 this.(immaker);

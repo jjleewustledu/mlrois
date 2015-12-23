@@ -182,7 +182,7 @@ classdef BlockedRoisBuilder
             import mlfsl.*;
             assert(lexist(pth, 'dir'));
             fqfn = filename(...
-                fullfile(pth, [pre FlirtVisitor.INTERIMAGE_TOKEN post]), FlirtVisitor.XFM_SUFFIX);
+                fullfile(pth, [pre FslRegistry.INTERIMAGE_TOKEN post]), FlirtVisitor.XFM_SUFFIX);
         end
         function            prepareRoisOnT1(bldr)            
             import mlfourd.* mlfsl.*;
@@ -195,7 +195,7 @@ classdef BlockedRoisBuilder
                     opts.in   = fullfile(flirtf.atlasPath, BlockedRoisBuilder.ATLASES{r});
                     opts.out  = BlockedRoisBuilder.onT1(rois{r});
                     opts.init = filename( ...
-                        fullfile(bldr.transformationsPath, ['MNI' FlirtVisitor.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
+                        fullfile(bldr.transformationsPath, ['MNI' FslRegistry.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
                     flirtf.applyTransform(opts);
                 catch ME
                     handexcept(ME, msg)
@@ -217,7 +217,7 @@ classdef BlockedRoisBuilder
                 opts.out  = BlockedRoisBuilder.onT1('modelok');
                 opts.init = filename( ...
                             fullfile(bldr.transformationsPath, ...
-                            ['asl1' FlirtVisitor.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
+                            ['asl1' FslRegistry.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
                 flirtf.applyTransform(opts); 
             catch ME
                 handexcept(ME)
@@ -254,23 +254,23 @@ classdef BlockedRoisBuilder
         end % static registerToModalities
          
         function fp = onT1(roi)
-            fp = [roi mlfsl.mlfsl.FlirtVisitor.INTERIMAGE_TOKEN 't1'];
+            fp = [roi mlfsl.mlfsl.FslRegistry.INTERIMAGE_TOKEN 't1'];
         end
         function fn = roiToT1(roi, bldr)
             import mlfourd.* mlfsl.*;
             tp = bldr.transformationsPath;
             fn = filename( ...
-                fullfile(tp, [roi FlirtVisitor.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
+                fullfile(tp, [roi FslRegistry.INTERIMAGE_TOKEN 't1']), FlirtVisitor.XFM_SUFFIX);
         end        
         function fn = t1ToMode(mode, bldr)
             import mlfourd.* mlfsl.*;
             fn = filename( ...
-                fullfile(bldr.transformationsPath, ['t1' FlirtVisitor.INTERIMAGE_TOKEN mode]), FlirtVisitor.XFM_SUFFIX);
+                fullfile(bldr.transformationsPath, ['t1' FslRegistry.INTERIMAGE_TOKEN mode]), FlirtVisitor.XFM_SUFFIX);
         end        
         function fn = roiToMode(roi, mode, bldr)
             import mlfourd.* mlsfl.*;
             fn = filenames( ...
-                fullfile(bldr.transformationsPath, [roi FlirtVisitor.INTERIMAGE_TOKEN mode]), FlirtVisitor.XFM_SUFFIX);
+                fullfile(bldr.transformationsPath, [roi FslRegistry.INTERIMAGE_TOKEN mode]), FlirtVisitor.XFM_SUFFIX);
         end        
         function ms = theMetrics
             import mlfourd.*;
@@ -280,11 +280,11 @@ classdef BlockedRoisBuilder
             end
         end        
         function fp = roiOnMode(roi, mode)
-            fp = [roi mlchoosers.ImagingChoosersInterface.INTERIMAGE_TOKEN mode];
+            fp = [roi mlfsl.FslRegistry.INTERIMAGE_TOKEN mode];
         end        
         function fn = inits(roi, mode, bldr)
             fn = filename( ...
-                fullfile(bldr.transformationsPath,[roi mlchoosers.ImagingChoosersInterface.INTERIMAGE_TOKEN mode]), mlfsl.FlirtVisitor.XFM_SUFFIX);
+                fullfile(bldr.transformationsPath,[roi mlfsl.FslRegistry.INTERIMAGE_TOKEN mode]), mlfsl.FlirtVisitor.XFM_SUFFIX);
         end
         
         function [metrics,rois] = assembleModalRois(andContinue)
@@ -295,12 +295,12 @@ classdef BlockedRoisBuilder
             nModes  = numel(modes);
             
             if (lexist(  'modelok.nii.gz','file'))
-                copyfile('modelok.nii.gz', ['modelok' ImagingChoosersInterface.INTERIMAGE_TOKEN 'asl1.nii.gz'], 'f');
+                copyfile('modelok.nii.gz', ['modelok' FslRegistry.INTERIMAGE_TOKEN 'asl1.nii.gz'], 'f');
             end
             rois    = cell(numel(rf.ROIS), nModes);
             for r = 1:numel(rf.ROIS)
                 for m = 1:nModes
-                    rois{r,m} = NIfTI.load([rf.ROIS{r} ImagingChoosersInterface.INTERIMAGE_TOKEN rf.MODES{m}]);
+                    rois{r,m} = NIfTI.load([rf.ROIS{r} FslRegistry.INTERIMAGE_TOKEN rf.MODES{m}]);
                 end
             end
             
@@ -359,7 +359,7 @@ classdef BlockedRoisBuilder
                 grays{m} = grays{m} + whites{m};
                 gtone    = grays{m} > 1;
                 grays{m} = grays{m} .* (~gtone) + gtone;
-                grays{m}.fileprefix = ['cortical' mlchoosers.ImagingChoosersInterface.INTERIMAGE_TOKEN BlockedRoisBuilder.MODES{m}];
+                grays{m}.fileprefix = ['cortical' mlfsl.FslRegistry.INTERIMAGE_TOKEN BlockedRoisBuilder.MODES{m}];
                 grays{m}.save;
             end
             
