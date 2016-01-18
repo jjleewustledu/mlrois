@@ -231,7 +231,7 @@ classdef BlockedRoisBuilder
             modes  = BlockedRoisBuilder.MODES;            
             rois   = BlockedRoisBuilder.ROIS;  %#ok<*PROP>
             flirtf = FlirtBuilder(bldr);
-            for r = 1:length(rois) %#ok<PROP>
+            for r = 1:length(rois) 
                 if (strcmp(rois{r}, 'white'))
                     trimroi(BlockedRoisBuilder.onT1(rois{r}), ...
                            {BlockedRoisBuilder.onT1(rois{4}) BlockedRoisBuilder.onT1(rois{5})});
@@ -239,13 +239,13 @@ classdef BlockedRoisBuilder
                 for m = 1:length(modes)
                     try
                         copyfile(BlockedRoisBuilder.t1ToMode(          modes{m}), ...
-                                 BlockedRoisBuilder.roiToMode(rois{r}, modes{m}), 'f'); %#ok<PROP>
+                                 BlockedRoisBuilder.roiToMode(rois{r}, modes{m}), 'f'); 
                         opts = FlirtOptions;
                         opts.ref  = BlockedRoisBuilder.theMetrics{m};
                         opts.in   = BlockedRoisBuilder.onT1(     rois{r});
                         opts.out  = BlockedRoisBuilder.roiOnMode(rois{r}, modes{m});
                         opts.init = BlockedRoisBuilder.inits(    rois{r}, modes{m});
-                        flirtf.applyTransform(opts); %#ok<PROP>                        
+                        flirtf.applyTransform(opts);                         
                     catch ME
                         handexcept(ME);
                     end
@@ -567,7 +567,7 @@ classdef BlockedRoisBuilder
                     fp{f} = BlockedRoisBuilder.toNIfTI(nii{f});
                 end
             else
-                if (isa(nii, 'mlfourd.NIfTIInterface'))
+                if (isa(nii, 'mlfourd.INIfTI'))
                     fp = nii.fileprefix;
                 elseif (ischar(nii))
                     fp = fileprefix(nii);
@@ -588,7 +588,7 @@ classdef BlockedRoisBuilder
             else
                 if (ischar(fp))
                     nii = NIfTI.load(fp);
-                elseif (isa(fp, 'mlfourd.NIfTIInterface'))
+                elseif (isa(fp, 'mlfourd.INIfTI'))
                     nii = NIfTI(fp);
                 elseif (isa(fp, 'mlfourd.BlockedRoisBuilder'))
                     nii = NIfTI(fp.intersectionRois);
