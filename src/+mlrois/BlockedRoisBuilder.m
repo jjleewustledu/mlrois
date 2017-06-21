@@ -599,7 +599,10 @@ classdef BlockedRoisBuilder
         end
     end 
     
-    methods %% GET/SET
+    methods 
+        
+        %% GET/SET
+        
         function lbl  = get.metricLabel(this)
             lbl = this.theMetric.label;
         end
@@ -617,9 +620,9 @@ classdef BlockedRoisBuilder
                 this.theRois{r}.label = lbls{r};
             end
         end
-    end
-    
-    methods 
+        
+        %%
+        
         function vecs = sampleVoxels(this, choice)
             
             %% SAMPLEVOXELS samples metric-voxels with some or all internal ROIs
@@ -699,20 +702,6 @@ classdef BlockedRoisBuilder
     %% PROTECTED
     
     methods (Access = 'protected')        
-        function this = BlockedRoisBuilder(metric, rois)
-            
-            %% CTOR
-            %  Usage: this = mlfourd.BlockedRoisBuilder(metric [, rois])
-            %         ^ Builder                 ^         ^ fileprefixes or NIfTIs
-            import mlfourd.*;
-            if (nargin > 0)
-                this.theMetric = BlockedRoisBuilder.toNIfTI(metric);
-            end
-            if (nargin > 1)
-                        rois = ensureCell(        rois);
-                this.theRois = BlockedRoisBuilder.toNIfTI(rois);
-            end
-        end % ctor
         function this = load(this, object)
             
             %% LOAD appends object, converted to NIfTI, to this.theRois
@@ -765,6 +754,21 @@ classdef BlockedRoisBuilder
             this.theMetric = this.theMetric .* (refMean/metricMean);
             this.theMetric.fileprefix = [this.theMetric.fileprefix '_scaled2ref'];
         end
+        
+        function this = BlockedRoisBuilder(metric, rois)
+            
+            %% CTOR
+            %  Usage: this = mlfourd.BlockedRoisBuilder(metric [, rois])
+            %         ^ Builder                 ^         ^ fileprefixes or NIfTIs
+            import mlfourd.*;
+            if (nargin > 0)
+                this.theMetric = BlockedRoisBuilder.toNIfTI(metric);
+            end
+            if (nargin > 1)
+                        rois = ensureCell(        rois);
+                this.theRois = BlockedRoisBuilder.toNIfTI(rois);
+            end
+        end % ctor
     end 
     
 end % classdef BlockedRoisBuilder
