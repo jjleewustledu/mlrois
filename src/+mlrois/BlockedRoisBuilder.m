@@ -40,7 +40,7 @@ classdef BlockedRoisBuilder
             %  Usage:  binnii = mlfourd.BlockedRoisBuilder.threshRoiByStd(fpmsk, numstd)
             %          numstd:  set threshold to be max intensity - numstd*std (optional)
             %                   otherwise mask coverage will be set to 1 percent of voxels
-            %  OBSOLETE, DEPRECATED
+            %  @deprecated
             mlfourd.NIfTI.isNIfTI
             maxfp  = dipmax(fpmsk.img);
             stdfp  = dipstd(fpmsk.img);
@@ -75,7 +75,7 @@ classdef BlockedRoisBuilder
             %  Usage:  binnii = mlfourd.BlockedRoisBuilder.threshRoiByCoverage(fpmsk, cover)
             %          numstd:  set threshold to be max intensity - numstd*std (optional)
             %                   otherwise mask coverage will be set to 1 percent of voxels
-            %  OBSOLETE, DEPRECATED
+            %  @deprecated
             mlfourd.NIfTI.isNIfTI
             maxfp  = dipmax(fpmsk.img);
             stdfp  = dipstd(fpmsk.img);
