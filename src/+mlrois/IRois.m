@@ -1,4 +1,4 @@
-classdef IRois 
+classdef (Abstract) IRois 
 	%% IROIS  
 
 	%  $Revision$

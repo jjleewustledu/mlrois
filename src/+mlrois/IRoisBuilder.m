@@ -1,4 +1,4 @@
-classdef IRoisBuilder 
+classdef (Abstract) IRoisBuilder 
 	%% IROISBUILDER  
 
 	%  $Revision$
@@ -11,7 +11,7 @@ classdef IRoisBuilder
  	end
 
 	methods (Abstract)
-		  
+        smpls = sampleRois(this, varargin)
  	end 
 
 	%  Created with Newcl by John J. Lee after newfcn by Frank Gonzalez-Morphy
