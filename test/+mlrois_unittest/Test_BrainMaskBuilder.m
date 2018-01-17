@@ -28,17 +28,19 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
         function test_view(this)
             this.testObj.product.view;
         end
-        function test_ct4rb(this)
+        function test_brainmaskBinarized(this)
+            % See also:  mlpet.TracerDirector.instanceConstructResolvedRois 
+            
+            [~,ct4rb] = this.testObj.brainmaskBinarized;
+            aab = this.testObj.aparcAsegBinarized(ct4rb);
+            aab.view('brainmask.4dfp.ifh');
+        end
+        function test_teardown(this)
             % See also:  mlpet.TracerDirector.instanceConstructResolvedRois            
             
-            pwd1 = this.sessd.petLocation;
-            ensuredir(pwd1);
-            pushd(pwd1);
-            [~,ct4rb] = this.testObj.brainmaskBinarized( ...
-                'tracer', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+            [~,ct4rb] = this.testObj.brainmaskBinarized('ignoreTouchfile', true);
             aab = this.testObj.aparcAsegBinarized(ct4rb);
-            aab.view;
-            popd(pwd1);
+            aab.view('brainmask.4dfp.ifh');
         end
 	end
 
@@ -69,9 +71,20 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
  	end
 
 	methods (Access = private)
+		function cleanFiles(this)
+            Prev_ = fullfile(this.sessd.sessionPath, 'Previous');
+            Prev = fullfile(this.sessd.tracerLocation, 'Previous');
+            if (isdir(Prev))
+                mlbash(sprintf('rm -r %s', Prev));
+            end
+            movefile(this.sessd.tracerLocation, Prev_);
+            mkdir(this.sessd.tracerLocation);
+            movefile(Prev_, Prev);
+            movefiles(fullfile(Prev, 'fdgv1r1_sumt.*'), this.sessd.tracerLocation);
+        end
 		function cleanFilesystem(this)
             popd(this.pwd0);
- 		end
+        end
 	end
 
 	%  Created with Newcl by John J. Lee after newfcn by Frank Gonzalez-Morphy
