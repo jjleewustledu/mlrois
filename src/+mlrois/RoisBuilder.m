@@ -1,4 +1,4 @@
-classdef RoisBuilder < mlpet.AbstractTracerBuilder & mlpatterns.IIterable
+classdef RoisBuilder < mlpipeline.AbstractSessionBuilder
 	%% ROISBUILDER  
 
 	%  $Revision$
@@ -6,19 +6,7 @@ classdef RoisBuilder < mlpet.AbstractTracerBuilder & mlpatterns.IIterable
  	%  last modified $LastChangedDate$ and placed into repository /Users/jjlee/Local/src/mlcvl/mlrois/src/+mlrois.
  	%% It was developed on Matlab 9.2.0.538062 (R2017a) for MACI64.  Copyright 2017 John Joowon Lee.
 
-    properties (Dependent)
-        iterator
-    end
-    
-	methods         
-        
-        %% GET
-        
-        function g = get.iterator(this)
-            g = [];
-        end
-        
-        %%
+	methods     
         
         function aab = aparcAsegBinarized(this, varargin)
             %% APARCASEGBINARIZED uses a pre-existing ct4rb to orthogonally project aparcAseg to the target of ct4rb,
@@ -94,7 +82,21 @@ classdef RoisBuilder < mlpet.AbstractTracerBuilder & mlpatterns.IIterable
             % teardown
             this.teardown;
             popd(pwd0);
+        end     
+        
+ 		function this = RoisBuilder(varargin)
+ 			%% ROISBUILDER
+            %  @param named 'logger' is an mlpipeline.AbstractLogger.
+            %  @param named 'product' is the initial state of the product to build.
+            %  @param named 'sessionData' is an mlpipeline.ISessionData.
+
+ 			this = this@mlpipeline.AbstractSessionBuilder(varargin{:});
         end
+    end 
+    
+    %% PROTECTED
+    
+    methods (Access = protected)        
         function teardown(this, varargin)
             ip = inputParser;
             addParameter(ip, 'sessionData', this.sessionData, @(x) isa(x, 'mlpipeline.SessionData'));
@@ -110,17 +112,8 @@ classdef RoisBuilder < mlpet.AbstractTracerBuilder & mlpatterns.IIterable
             deleteExisting('aparcAsegBinarizedr*');
             movefileExisting(fullfile(tmpdir, '*'));
             rmdir(tmpdir);
-        end        
-        
- 		function this = RoisBuilder(varargin)
- 			%% ROISBUILDER
-            %  @param named 'logger' is an mlpipeline.AbstractLogger.
-            %  @param named 'product' is the initial state of the product to build.
-            %  @param named 'sessionData' is an mlpipeline.ISessionData.
-
- 			this = this@mlpet.AbstractTracerBuilder(varargin{:});
-        end
-    end 
+        end   
+    end
 
 	%  Created with Newcl by John J. Lee after newfcn by Frank Gonzalez-Morphy
  end
