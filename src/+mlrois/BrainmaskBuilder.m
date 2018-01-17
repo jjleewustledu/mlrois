@@ -23,27 +23,27 @@ classdef BrainmaskBuilder < mlrois.RoisBuilder
         %%
         
         function [bmbb,ct4rb] = brainmaskBinarized(this, varargin)
-            %% BRAINMASKBINARIZED resolves brainmaskBinarizeBlended to tracerIC
-            %  @param named tracerIC is an mlfourd.ImagingContext.
-            %  @param named ignoreTouchfile is logical; default is false; calls teardown if true.
+            %% BRAINMASKBINARIZED resolves brainmaskBinarizeBlended to tracer
+            %  @param named tracer is an mlfourd.ImagingContext.
+            %  @param named reuse is logical; reusing existing brainmaskBinarizeBlended is default.
             %  @returns bmbb, brainmaskBinarizeBlended, as mlfourd.ImagingContext.
             %  @returns ct4rb as mlfourdfp.CompositeT4ResolveBuilder.
             
             ip = inputParser;
-            addParameter(ip, 'tracer', this.sessionData.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), @(x) isa(x, 'mlfourd.ImagingContext')); 
+            addParameter(ip, 'tracerIC', [],  @(x) isa(x, 'mlfourd.ImagingContext')); 
             addParameter(ip, 'reuse', true, @islogical);
             parse(ip, varargin{:});
             
             pwd0    = pushd(ensureFolderExists(this.sessionData.tracerLocation));
             sessd   = this.sessionData;
-            tr      = ip.Results.tracer;
+            tr      = ip.Results.tracerIC;
             if (~lexist([tr.fileprefix '_brain.4dfp.ifh'], 'file'))
                 [~,msktNorm] = this.msktgenImg; % ImagingContext
                 msktNormNN   = msktNorm.numericalNiftid;
                 tr_sumtNN    = tr.numericalNiftid;
                 tr           = mlfourd.ImagingContext(tr_sumtNN.*msktNormNN);
                 tr.filepath  = pwd;
-                tr.filename  = [ip.Results.tracer.fileprefix '_brain.4dfp.ifh'];
+                tr.filename  = [ip.Results.tracerIC.fileprefix '_brain.4dfp.ifh'];
                 tr.save;
             end
             
@@ -62,47 +62,57 @@ classdef BrainmaskBuilder < mlrois.RoisBuilder
             bmbb.numericalNiftid; % retain ImagingContext
             bmbb  = bmbb.binarizeBlended;
             bmbb.saveas(bmbbFn);
-            popd(pwd0);
             
-%             ip = inputParser;
-%             addParameter(ip, 'tracerIC', this.sessionData.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), ...
-%                                                        @(x) isa(x, 'mlfourd.ImagingContext')); 
-%             addParameter(ip, 'ignoreTouchfile', false, @islogical);
-%             parse(ip, varargin{:});
-%             
-%             pwd0 = pushd(ensuredir(this.sessionData.tracerLocation));
-%             if (~lexist(this.brainmask.filename, 'file')) % in cwd
-%                 this.buildVisitor.lns_4dfp(this.brainmask.fqfileprefix);
-%             end
-%             
-%             trIC = ip.Results.tracerIC;
-%             if (~lexist([trIC.fileprefix '_brain.4dfp.ifh'], 'file'))
-%                 [~,mskt]      = this.msktgenImg; % ImagingContext
-%                 msktNN        = mskt.numericalNiftid;
-%                 tr_sumtNN     = trIC.numericalNiftid;
-%                 trIC          = mlfourd.ImagingContext(tr_sumtNN.*msktNN);
-%                 trIC.filepath = pwd;
-%                 trIC.filename = [ip.Results.tracerIC.fileprefix '_brain.4dfp.ifh'];
-%                 trIC.save;
-%             end
-%             
-%             ct4rb = mlfourdfp.CompositeT4ResolveBuilder( ...
-%                 'sessionData', this.sessionData, ...
-%                 'theImages', {trIC.fileprefix this.brainmask.fileprefix}, ...
-%                 'ignoreTouchfile', ip.Results.ignoreTouchfile);
-%             bmbbFn = this.sessionData.brainmaskBinarizeBlended('suffix', ['_' ct4rb.resolveTag], 'typ', 'fn.4dfp.ifh');
-%             if (~ip.Results.ignoreTouchfile && lexist(bmbbFn))
-%                 bmbb = mlfourd.ImagingContext(bmbbFn);
-%                 return
-%             end
-%             ct4rb = ct4rb.resolve;
-%             bmbb  = ct4rb.product{2};
-%             bmbb.numericalNiftid; % retain ImagingContext
-%             bmbb  = bmbb.binarizeBlended;
-%             bmbb.saveas(bmbbFn);
-%             
-%            this.teardown('sessionData', ct4rb.sessionData);
-%            popd(pwd0);
+            % teardown
+            this.teardown('tracerIC', ip.Results.tracerIC, 'sessionData', ct4rb.sessionData);
+            popd(pwd0);
+        end
+        function [bmbb,ct4rb] = brainmaskBinarized__(this, varargin)
+            %% BRAINMASKBINARIZED resolves brainmaskBinarizeBlended to tracerIC
+            %  @param named tracerIC is an mlfourd.ImagingContext.
+            %  @param named ignoreTouchfile is logical; default is false; calls teardown if true.
+            %  @returns bmbb, brainmaskBinarizeBlended, as mlfourd.ImagingContext.
+            %  @returns ct4rb as mlfourdfp.CompositeT4ResolveBuilder.
+            
+            ip = inputParser;
+            addParameter(ip, 'tracerIC', [], ...
+                                                       @(x) isa(x, 'mlfourd.ImagingContext')); 
+            addParameter(ip, 'ignoreTouchfile', false, @islogical);
+            parse(ip, varargin{:});
+            
+            pwd0 = pushd(ensuredir(this.sessionData.tracerLocation));
+            if (~lexist(this.brainmask.filename, 'file')) % in cwd
+                this.buildVisitor.lns_4dfp(this.brainmask.fqfileprefix);
+            end
+            
+            trIC = ip.Results.tracerIC;
+            if (~lexist([trIC.fileprefix '_brain.4dfp.ifh'], 'file'))
+                [~,mskt]      = this.msktgenImg; % ImagingContext
+                msktNN        = mskt.numericalNiftid;
+                tr_sumtNN     = trIC.numericalNiftid;
+                trIC          = mlfourd.ImagingContext(tr_sumtNN.*msktNN);
+                trIC.filepath = pwd;
+                trIC.filename = [ip.Results.tracerIC.fileprefix '_brain.4dfp.ifh'];
+                trIC.save;
+            end
+            
+            ct4rb = mlfourdfp.CompositeT4ResolveBuilder( ...
+                'sessionData', this.sessionData, ...
+                'theImages', {trIC.fileprefix this.brainmask.fileprefix}, ...
+                'ignoreTouchfile', ip.Results.ignoreTouchfile);
+            bmbbFn = this.sessionData.brainmaskBinarizeBlended('suffix', ['_' ct4rb.resolveTag], 'typ', 'fn.4dfp.ifh');
+            if (~ip.Results.ignoreTouchfile && lexist(bmbbFn))
+                bmbb = mlfourd.ImagingContext(bmbbFn);
+                return
+            end
+            ct4rb = ct4rb.resolve;
+            bmbb  = ct4rb.product{2};
+            bmbb.numericalNiftid; % retain ImagingContext
+            bmbb  = bmbb.binarizeBlended;
+            bmbb.saveas(bmbbFn);
+            
+           this.teardown('tracerIC', ip,results.tracerIC, 'sessionData', ct4rb.sessionData);
+           popd(pwd0);
         end
         function ic = tracerRevisionSumt_brain(this, varargin)
             ip = inputParser;
@@ -123,8 +133,7 @@ classdef BrainmaskBuilder < mlrois.RoisBuilder
         end
         function teardown(this, varargin)
             ip = inputParser;
-            addParameter(ip, 'tracerIC', this.sessionData.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), ...
-                                                              @(x) isa(x, 'mlfourd.ImagingContext')); 
+            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
             addParameter(ip, 'sessionData', this.sessionData, @(x) isa(x, 'mlpipeline.SessionData'));
             parse(ip, varargin{:});
             
@@ -133,8 +142,8 @@ classdef BrainmaskBuilder < mlrois.RoisBuilder
             mkdir(tmpdir);
             movefileExisting(sprintf('brainmaskr%i_op_*', sessd.rnumber-1), tmpdir);
             movefileExisting(sprintf('%s_brainr%i_op_*', ip.Results.tracerIC.fileprefix, sessd.rnumber-1), tmpdir);
-            ensuredir('T4');
-            movefileExisting('*_t4')
+            %ensuredir('T4');
+            %movefileExisting('*_t4', 'T4')
             deleteExisting('brainmaskr*');
             deleteExisting(sprintf('%s_brainr*', ip.Results.tracerIC.fileprefix));
             deleteExisting('*_b15.4dfp.*');

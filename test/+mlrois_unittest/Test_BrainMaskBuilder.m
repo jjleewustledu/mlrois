@@ -31,14 +31,16 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
         function test_brainmaskBinarized(this)
             % See also:  mlpet.TracerDirector.instanceConstructResolvedRois 
             
-            [~,ct4rb] = this.testObj.brainmaskBinarized;
+            [~,ct4rb] = this.testObj.brainmaskBinarized( ...
+                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
             aab = this.testObj.aparcAsegBinarized(ct4rb);
             aab.view('brainmask.4dfp.ifh');
         end
         function test_teardown(this)
             % See also:  mlpet.TracerDirector.instanceConstructResolvedRois            
             
-            [~,ct4rb] = this.testObj.brainmaskBinarized('ignoreTouchfile', true);
+            [~,ct4rb] = this.testObj.brainmaskBinarized( ...
+                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), 'ignoreTouchfile', true);
             aab = this.testObj.aparcAsegBinarized(ct4rb);
             aab.view('brainmask.4dfp.ifh');
         end
