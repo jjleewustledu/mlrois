@@ -34,7 +34,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             [~,ct4rb] = this.testObj.brainmaskBinarized( ...
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
             aab = this.testObj.aparcAsegBinarized(ct4rb);
-            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmask.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
+            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
         end
         function test_teardown(this)
             % See also:  mlpet.TracerDirector.instanceConstructResolvedRois            
@@ -42,7 +42,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             [~,ct4rb] = this.testObj.brainmaskBinarized( ...
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), 'ignoreTouchfile', true);
             aab = this.testObj.aparcAsegBinarized(ct4rb);
-            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmask.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
+            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
         end
 	end
 
