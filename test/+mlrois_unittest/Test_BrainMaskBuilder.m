@@ -28,21 +28,35 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
         function test_view(this)
             this.testObj.product.view;
         end
-        function test_brainmaskBinarized(this)
+        function test_buildBrainmaskBinarized(this)
             % See also:  mlpet.TracerDirector.instanceConstructResolvedRois 
             
-            [~,ct4rb] = this.testObj.brainmaskBinarized( ...
+            cd(this.sessd.tracerLocation);
+            this.testObj = this.testObj.buildBrainmaskBinarized( ...
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
-            aab = this.testObj.aparcAsegBinarized(ct4rb);
-            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
+            p = this.testObj.product;
+            p.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh');
         end
-        function test_teardown(this)
-            % See also:  mlpet.TracerDirector.instanceConstructResolvedRois            
-            
-            [~,ct4rb] = this.testObj.brainmaskBinarized( ...
-                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'), 'ignoreTouchfile', true);
-            aab = this.testObj.aparcAsegBinarized(ct4rb);
-            aab.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh', 'aparcAseg_op_fdgv1r1.4dfp.ifh');
+        
+        %% test subclasses of BrainMaskBuilder
+        
+        function test_aparcAseg(this)            
+            cd(this.sessd.tracerLocation);
+            sub = mlrois.AparcAsegBuilder('sessionData', this.sessd);
+            sub = sub.buildBrainmaskBinarized( ...
+                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+            sub = sub.buildAparcAseg('t4rb', sub.ct4rb);
+            p = sub.product;
+            p.view('fdgv1r1_sumt.4dfp.ifh');
+        end
+        function test_aparcAsegBinarized(this)            
+            cd(this.sessd.tracerLocation);
+            sub = mlrois.AparcAsegBuilder('sessionData', this.sessd);
+            sub = sub.buildBrainmaskBinarized( ...
+                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+            sub = sub.buildAparcAsegBinarized('t4rb', sub.ct4rb);
+            p = sub.product;
+            p.view('fdgv1r1_sumt.4dfp.ifh');
         end
 	end
 

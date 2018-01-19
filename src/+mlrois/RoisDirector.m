@@ -1,34 +1,39 @@
-classdef RoisIterator < mlpatterns.Iterator
-	%% ROISITERATOR  
+classdef RoisDirector < mlpatterns.Iterator
+	%% ROISDIRECTOR  
 
 	%  $Revision$
- 	%  was created 14-Jan-2018 19:54:40 by jjlee,
+ 	%  was created 17-Jan-2018 18:29:59 by jjlee,
  	%  last modified $LastChangedDate$ and placed into repository /Users/jjlee/Local/src/mlcvl/mlrois/src/+mlrois.
  	%% It was developed on Matlab 9.3.0.713579 (R2017b) for MACI64.  Copyright 2018 John Joowon Lee.
  	
+	properties
+ 		
+ 	end
+
 	methods 
         function elts = next(this)
         end
-        function tf = hasNext(this)
+        function next = hasNext(this)
         end
-        function reset(this)
-        end
+        function        reset(this)
+
+        end        
 		  
- 		function this = RoisIterator(varargin)
- 			%% ROISITERATOR
-            %  @params required iterable is an mlpatterns.IIterable that instantiated this RoisIterator.
+ 		function this = RoisDirector(varargin)
+ 			%% ROISDIRECTOR
             
             ip = inputParser;
-            addRequired(ip, 'iterable', @(x) isa(a, 'mlpatterns.IIterable'));
+            addParameter(ip, 'roisBldr', @(x) isa(x, 'mlrois.IRoisBuilder'));
             parse(ip, varargin{:});
-            this.iterable_ = ip.Results.iterable;
+            
+            this.roisBuilder_ = ip.Results.roisBldr;
  		end
     end 
     
     %% PRIVATE
     
     properties (Access = private)
-        iterable_
+        roisBuilder_
     end
 
 	%  Created with Newcl by John J. Lee after newfcn by Frank Gonzalez-Morphy
