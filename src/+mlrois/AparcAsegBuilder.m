@@ -13,66 +13,38 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
 	methods 
         function this = buildAparcAseg(this, varargin)            
             %% BUILDAPARCASEG uses a pre-existing ct4rb to orthogonally project aparcAseg to the target of ct4rb.
-            %  @param required t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param optional reuse is logical; default true -> use aparcAsegBinarized_op_tracerRevision.4dfp.ifh.
-            %  returns aab, an mlfourd.ImagingContext.
+            %  @param named cwd is the current working directory.
+            %  @param named tracerIC is an mlfourd.ImagingContext.
+            %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
+            %  @param named ignoreTouchfile is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 'cwd', this.tracerLocation, @isdir);
-            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
             addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder'));
-            addParameter(ip, 'ignoreTouchfile', false, @islogical);
             parse(ip, varargin{:});
                       
-            pwd0 = pushd(ip.Results.cwd);
-            
-            if (this.aparcAsegMissing) % in cwd
-                this.buildVisitor_.convertImageToLocal4dfp( ...
-                    this.sessionData.aparcAseg('typ', 'mgz'), 'aparcAseg');
-            end            
-            if (isempty(ip.Results.t4rb))
-                this = this.buildBrainmaskBinarized(varargin{:});
-            end            
-            if (this.cacheAvailable(ip.Results, this.aaFilename))
-                this.product_ = mlfourd.ImagingContext(this.aaFilename);
-                popd(pwd0);
-                return
-            end
-            this.product_ = this.aaResolved(ip.Results);
+            pwd0 = pushd(ip.Results.cwd);            
+            this = this.buildAparcAsegCommon(varargin{:}, 'targetFilename', this.aaFilename);
             this.teardown('sessionData', ip.Results.t4rb.sessionData);            
             popd(pwd0);
         end
         function this = buildAparcAsegBinarized(this, varargin)
             %% BUILDAPARCASEGBINARIZED uses a pre-existing ct4rb to orthogonally project aparcAseg to the target of ct4rb,
             %  then binarize.
-            %  @param required t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param optional reuse is logical; default true -> use aparcAsegBinarized_op_tracerRevision.4dfp.ifh.
-            %  returns aab, an mlfourd.ImagingContext.
+            %  @param named cwd is the current working directory.
+            %  @param named tracerIC is an mlfourd.ImagingContext.
+            %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
+            %  @param named ignoreTouchfile is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
-            addParameter(ip, 'cwd', this.tracerLocation, @isdir);
-            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
-            addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder'));
-            addParameter(ip, 'ignoreTouchfile', false, @islogical);
+            addParameter(ip, 'cwd', this.tracerLocation, @isdir); 
+            addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder')); 
             parse(ip, varargin{:});
             
             pwd0 = pushd(ip.Results.cwd);
-            
-            if (this.aparcAsegMissing) % in cwd
-                this.buildVisitor_.convertImageToLocal4dfp( ...
-                    this.sessionData.aparcAseg('typ', 'mgz'), 'aparcAseg');
-            end            
-            if (isempty(ip.Results.t4rb))
-                this = this.buildBrainmaskBinarized(varargin{:});
-            end            
-            if (this.cacheAvailable(ip.Results, this.aabFilename))
-                this.product_ = mlfourd.ImagingContext(this.aabFilename);
-                popd(pwd0);
-                return
-            end
-            this.product_ = this.aaResolved(ip.Results);
+            this = this.buildAparcAsegCommon(varargin{:}, 'targetFilename', this.aabFilename);
             this.product_ = this.aaBinarized(this.product_, ip.Results);
             this.teardown('sessionData', ip.Results.t4rb.sessionData);            
             popd(pwd0);
@@ -80,14 +52,10 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
         function this = buildAparcAsegCommon(this, varargin)
             ip = inputParser;
             ip.KeepUnmatched = true;
-            addParameter(ip, 'cwd', this.tracerLocation, @isdir);
-            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
             addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder'));
             addParameter(ip, 'ignoreTouchfile', false, @islogical);
             addParameter(ip, 'targetFilename', @ischar);
             parse(ip, varargin{:});
-            
-            pwd0 = pushd(ip.Results.cwd);
             
             if (this.aparcAsegMissing) % in cwd
                 this.buildVisitor_.convertImageToLocal4dfp( ...
@@ -98,7 +66,6 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             end            
             if (this.cacheAvailable(ip.Results, ip.Results.targetFilename))
                 this.product_ = mlfourd.ImagingContext(ip.Results.targetFilename);
-                popd(pwd0);
                 return
             end
             this.product_ = this.aaResolved(ip.Results);
