@@ -16,7 +16,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
             %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param named ignoreTouchfile is logical; default is false.
+            %  @param named ignoreFinishfile is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
@@ -35,7 +35,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
             %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param named ignoreTouchfile is logical; default is false.
+            %  @param named ignoreFinishfile is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
@@ -53,7 +53,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder'));
-            addParameter(ip, 'ignoreTouchfile', false, @islogical);
+            addParameter(ip, 'ignoreFinishfile', false, @islogical);
             addParameter(ip, 'targetFilename', @ischar);
             parse(ip, varargin{:});
             
@@ -86,7 +86,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             tf = ~lexist(this.aaFilename, 'file');
         end
         function tf = cacheAvailable(~, ipr, fn)
-            tf = ~ipr.ignoreTouchfile && lexist(fn, 'file');
+            tf = ~ipr.ignoreFinishfile && lexist(fn, 'file');
         end
         function fn = aaFilename(this)
             fn = mlfourdfp.FourdfpVisitor.ensureSafeFileprefix( ...

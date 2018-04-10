@@ -27,13 +27,13 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             %% BUILDBRAINMASKBINARIZED resolves brainmask to tracerIC, then binarizes.
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
-            %  @param named ignoreTouchfile is logical; default is false.
+            %  @param named ignoreFinishfile is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 'cwd', this.tracerLocation, @isdir);
             addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
-            addParameter(ip, 'ignoreTouchfile', false, @islogical);
+            addParameter(ip, 'ignoreFinishfile', false, @islogical);
             parse(ip, varargin{:});
             
             pwd0 = pushd(ip.Results.cwd);            
@@ -82,7 +82,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             this.ct4rb_ = mlfourdfp.CompositeT4ResolveBuilder( ...
                 'sessionData', this.sessionData, ...
                 'theImages', {trIC.fileprefix this.sessionData.brainmask.fileprefix}, ...
-                'ignoreTouchfile', ipr.ignoreTouchfile);  
+                'ignoreFinishfile', ipr.ignoreFinishfile);  
         end
         function teardown(this, varargin)
             this.teardown@mlrois.AbstractRoisBuilder(varargin{:});
@@ -113,7 +113,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             tf = ~lexist(this.sessionData.brainmask('typ', 'fn.4dfp.ifh'), 'file');
         end
         function tf = bmbbCacheAvailable(this, ipr)
-            tf = ~ipr.ignoreTouchfile && lexist(this.bmbbFilename, 'file');
+            tf = ~ipr.ignoreFinishfile && lexist(this.bmbbFilename, 'file');
         end
         function fn = bmbbFilename(this)
             fn = this.sessionData.brainmaskBinarizeBlended('typ', 'fn.4dfp.ifh');
