@@ -89,8 +89,8 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             tf = ~ipr.ignoreFinishfile && lexist(fn, 'file');
         end
         function fn = aaFilename(this)
-            fn = mlfourdfp.FourdfpVisitor.ensureSafeFileprefix( ...
-                this.sessionData.aparcAseg('typ', 'fn.4dfp.ifh'));
+            fn = this.ensureSafeFileprefix( ...
+                 this.sessionData.aparcAseg('typ', 'fn.4dfp.ifh'));
         end
         function fn = aabFilename(this)
             fn = this.sessionData.aparcAsegBinarized('typ', 'fn.4dfp.ifh');

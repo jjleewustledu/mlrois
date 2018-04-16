@@ -82,8 +82,8 @@ classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisB
     %% PRIVATE
     
     methods (Access = private)   
-        function fn = tracerSafename(~, ipr)
-            fn = mybasename(mlfourdfp.FourdfpVisitor.ensureSafeFileprefix(ipr.tracerFn));
+        function fn = tracerSafename(this, ipr)
+            fn = mybasename(this.ensureSafeFileprefix(ipr.tracerFn));
         end
         function fn = tracerSafenameMskt(this, ipr)
             fn = [this.tracerSafename(ipr) '_mskt.4dfp.ifh'];
