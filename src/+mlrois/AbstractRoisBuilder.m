@@ -1,4 +1,4 @@
-classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisBuilder
+classdef AbstractRoisBuilder < mlpipeline.AbstractBuilder & mlrois.IRoisBuilder
 	%% ABSTRACTROISBUILDER  
 
 	%  $Revision$
@@ -37,7 +37,7 @@ classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisB
         end    
         function smpls = sampleRois(this, varargin)
             ip = inputParser;
-            addRequired(ip, 'bldr', @(x) isa(x, 'mlpipeline.IDataBuilder'));
+            addRequired(ip, 'bldr', @(x) isa(x, 'mlpipeline.IBuilder'));
             parse(ip, varargin{:});
             
             smpls = repelem(mlfourd.ImagingContext([]), 1, length(this.rois));
@@ -57,18 +57,20 @@ classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisB
             if (this.missingTracerImg_brain(ic))
                 ic          = mlfourd.ImagingContext(ic.numericalNiftid .* this.msktNN);
                 ic.filepath = pwd;
-                ic.filename = [ip.Results.tracerIC.fileprefix '_brain.4dfp.ifh'];
+                ic.filename = [ip.Results.tracerIC.fileprefix '_brain.4dfp.hdr'];
                 ic.save;
             end
         end
 		  
  		function this = AbstractRoisBuilder(varargin)
  			%% ABSTRACTROISBUILDER
-            %  @param named 'logger' is an mlpipeline.AbstractLogger.
-            %  @param named 'product' is the initial state of the product to build.
             %  @param named 'sessionData' is an mlpipeline.ISessionData.
 
- 			this = this@mlpipeline.AbstractSessionBuilder(varargin{:});
+            ip = inputParser;
+            ip.KeepUnmatched = true;
+            addParameter(ip, 'sessionData', [], @(x) isa(x, 'mlpipeline.ISessionData'));
+            parse(ip, varargin{:});           
+            this.sessionData_ = ip.Results.sessionData;
  		end
  	end 
     
@@ -86,10 +88,10 @@ classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisB
             fn = mybasename(this.ensureSafeFileprefix(ipr.tracerFn));
         end
         function fn = tracerSafenameMskt(this, ipr)
-            fn = [this.tracerSafename(ipr) '_mskt.4dfp.ifh'];
+            fn = [this.tracerSafename(ipr) '_mskt.4dfp.hdr'];
         end
         function fn = tracerSafenameMsktNorm(this, ipr)
-            fn = [this.tracerSafename(ipr) '_msktNorm.4dfp.ifh'];
+            fn = [this.tracerSafename(ipr) '_msktNorm.4dfp.hdr'];
         end
         function tf = existingMskt(this, ipr)
             tf = lexist(this.tracerSafenameMskt(ipr), 'file') && ...
@@ -108,7 +110,7 @@ classdef AbstractRoisBuilder < mlpipeline.AbstractSessionBuilder & mlrois.IRoisB
             msktNorm = ImagingContext(msktNN);
         end
         function tf = missingTracerImg_brain(~, ic)
-            tf = ~lexist([ic.fileprefix '_brain.4dfp.ifh'], 'file');
+            tf = ~lexist([ic.fileprefix '_brain.4dfp.hdr'], 'file');
         end
         function nn = msktNN(this)
             [~,mskt] = this.msktgenImg; % ImagingContext

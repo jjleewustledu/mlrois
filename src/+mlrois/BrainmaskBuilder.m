@@ -27,13 +27,13 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             %% BUILDBRAINMASKBINARIZED resolves brainmask to tracerIC, then binarizes.
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
-            %  @param named ignoreFinishfile is logical; default is false.
+            %  @param named ignoreFinishMark is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 'cwd', this.tracerLocation, @isdir);
             addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
-            addParameter(ip, 'ignoreFinishfile', false, @islogical);
+            addParameter(ip, 'ignoreFinishMark', false, @islogical);
             parse(ip, varargin{:});
             
             pwd0 = pushd(ip.Results.cwd);            
@@ -54,7 +54,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
         end
         
  		function this = BrainmaskBuilder(varargin)
- 			%% BRAINMASKBUILDER ensures there exists sessionData.vLocation/brainmask.4dfp.ifh;
+ 			%% BRAINMASKBUILDER ensures there exists sessionData.vLocation/brainmask.4dfp.hdr;
             %  it is set as the initial state of this.product.
             %  @param named 'logger' is an mlpipeline.AbstractLogger.
             %  @param named 'product' is the initial state of the product to build.
@@ -82,7 +82,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             this.ct4rb_ = mlfourdfp.CompositeT4ResolveBuilder( ...
                 'sessionData', this.sessionData, ...
                 'theImages', {trIC.fileprefix this.sessionData.brainmask.fileprefix}, ...
-                'ignoreFinishfile', ipr.ignoreFinishfile);  
+                'ignoreFinishMark', ipr.ignoreFinishMark);  
         end
         function teardown(this, varargin)
             this.teardown@mlrois.AbstractRoisBuilder(varargin{:});
@@ -110,13 +110,13 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
     
     methods (Access = private)
         function tf = brainmaskMissing(this)
-            tf = ~lexist(this.sessionData.brainmask('typ', 'fn.4dfp.ifh'), 'file');
+            tf = ~lexist(this.sessionData.brainmask('typ', 'fn.4dfp.hdr'), 'file');
         end
         function tf = bmbbCacheAvailable(this, ipr)
-            tf = ~ipr.ignoreFinishfile && lexist(this.bmbbFilename, 'file');
+            tf = ~ipr.ignoreFinishMark && lexist(this.bmbbFilename, 'file');
         end
         function fn = bmbbFilename(this)
-            fn = this.sessionData.brainmaskBinarizeBlended('typ', 'fn.4dfp.ifh');
+            fn = this.sessionData.brainmaskBinarizeBlended('typ', 'fn.4dfp.hdr');
         end
         function ic = bmbbResolved(this)
             this.ct4rb_ = this.ct4rb_.resolve;

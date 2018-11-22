@@ -1,8 +1,8 @@
-classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
-	%% TEST_BRAINMASKBUILDER 
+classdef Test_BrainmaskBuilder < matlab.unittest.TestCase
+	%% TEST_BrainmaskBUILDER 
 
-	%  Usage:  >> results = run(mlrois_unittest.Test_BrainMaskBuilder)
- 	%          >> result  = run(mlrois_unittest.Test_BrainMaskBuilder, 'test_dt')
+	%  Usage:  >> results = run(mlrois_unittest.Test_BrainmaskBuilder)
+ 	%          >> result  = run(mlrois_unittest.Test_BrainmaskBuilder, 'test_dt')
  	%  See also:  file:///Applications/Developer/MATLAB_R2014b.app/help/matlab/matlab-unit-test-framework.html
 
 	%  $Revision$
@@ -35,10 +35,10 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             this.testObj = this.testObj.buildBrainmaskBinarized( ...
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
             p = this.testObj.product;
-            p.view('fdgv1r1_sumt.4dfp.ifh', 'brainmaskr2_op_fdgv1r1.4dfp.ifh');
+            p.view('fdgv1r1_sumt.4dfp.hdr', 'Brainmaskr2_op_fdgv1r1.4dfp.hdr');
         end
         
-        %% test subclasses of BrainMaskBuilder
+        %% test subclasses of BrainmaskBuilder
         
         function test_aparcAseg(this)            
             cd(this.sessd.tracerLocation);
@@ -47,7 +47,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
             sub = sub.buildAparcAseg('t4rb', sub.ct4rb);
             p = sub.product;
-            p.view('fdgv1r1_sumt.4dfp.ifh');
+            p.view('fdgv1r1_sumt.4dfp.hdr');
         end
         function test_aparcAsegBinarized(this)            
             cd(this.sessd.tracerLocation);
@@ -56,12 +56,12 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
                 'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
             sub = sub.buildAparcAsegBinarized('t4rb', sub.ct4rb);
             p = sub.product;
-            p.view('fdgv1r1_sumt.4dfp.ifh');
+            p.view('fdgv1r1_sumt.4dfp.hdr');
         end
 	end
 
  	methods (TestClassSetup)
-		function setupBrainMaskBuilder(this)
+		function setupBrainmaskBuilder(this)
  			import mlrois.*;
             this.sessd = mlraichle.SessionData( ...
                 'studyData', mlraichle.StudyData, ...
@@ -75,7 +75,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
 	end
 
  	methods (TestMethodSetup)
-		function setupBrainMaskBuilderTest(this)
+		function setupBrainmaskBuilderTest(this)
  			this.testObj = this.testObj_;
             this.pwd0 = pushd(this.sessp);
  			this.addTeardown(@this.cleanFilesystem);
