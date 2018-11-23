@@ -16,7 +16,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
             %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param named ignoreFinishfile is logical; default is false.
+            %  @param named ignoreFinishMark is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
@@ -35,7 +35,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             %  @param named cwd is the current working directory.
             %  @param named tracerIC is an mlfourd.ImagingContext.
             %  @param named t4rb is an mlfourdfp.IT4ResolveBuilder.
-            %  @param named ignoreFinishfile is logical; default is false.
+            %  @param named ignoreFinishMark is logical; default is false.
             
             ip = inputParser;
             ip.KeepUnmatched = true;
@@ -53,7 +53,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 't4rb', this.ct4rb_, @(x) isa(x, 'mlfourdfp.IT4ResolveBuilder'));
-            addParameter(ip, 'ignoreFinishfile', false, @islogical);
+            addParameter(ip, 'ignoreFinishMark', false, @islogical);
             addParameter(ip, 'targetFilename', @ischar);
             parse(ip, varargin{:});
             
@@ -86,28 +86,28 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
             tf = ~lexist(this.aaFilename, 'file');
         end
         function tf = cacheAvailable(~, ipr, fn)
-            tf = ~ipr.ignoreFinishfile && lexist(fn, 'file');
+            tf = ~ipr.ignoreFinishMark && lexist(fn, 'file');
         end
         function fn = aaFilename(this)
             fn = this.ensureSafeFileprefix( ...
-                 this.sessionData.aparcAseg('typ', 'fn.4dfp.ifh'));
+                 this.sessionData.aparcAseg('typ', 'fn.4dfp.hdr'));
         end
         function fn = aabFilename(this)
-            fn = this.sessionData.aparcAsegBinarized('typ', 'fn.4dfp.ifh');
+            fn = this.sessionData.aparcAsegBinarized('typ', 'fn.4dfp.hdr');
         end
         function ic = aaResolved(this, ipr)
             t4rb = ipr.t4rb;
-            aa = t4rb.t4img_4dfp_0( ...
-                this.sessionData.brainmask('typ','fp'), mybasename(this.aaFilename), 'options', '-n'); % target is specified by t4rb
-            aa = mlfourd.ImagingContext([aa '.4dfp.ifh']);
+            t4 = sprintf('%s_to_%s_t4', this.sessionData.brainmask('typ','fp'), t4rb.resolveTag);
+            aa = t4rb.t4img_4dfp(t4, mybasename(this.aaFilename), 'options', '-n'); % target is specified by t4rb
+            aa = mlfourd.ImagingContext([aa '.4dfp.hdr']);
             nn = aa.numericalNiftid;
-            nn.saveas(['aparcAseg_' t4rb.resolveTag '.4dfp.ifh']);
+            nn.saveas(['aparcAseg_' t4rb.resolveTag '.4dfp.hdr']);
             ic = mlfourd.ImagingContext(nn);
         end
         function ic = aaBinarized(~, ic, ipr)
             nn = ic.numericalNiftid;
             nn = nn.binarized; % set threshold to intensity floor
-            nn.saveas(['aparcAsegBinarized_' ipr.t4rb.resolveTag '.4dfp.ifh']);
+            nn.saveas(['aparcAsegBinarized_' ipr.t4rb.resolveTag '.4dfp.hdr']);
             ic = mlfourd.ImagingContext(nn);
         end
     end
