@@ -65,7 +65,7 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
                 this = this.buildBrainmaskBinarized(varargin{:});
             end            
             if (this.cacheAvailable(ip.Results, ip.Results.targetFilename))
-                this.product_ = mlfourd.ImagingContext(ip.Results.targetFilename);
+                this.product_ = mlfourd.ImagingContext2(ip.Results.targetFilename);
                 return
             end
             this.product_ = this.aaResolved(ip.Results);
@@ -98,17 +98,13 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
         function ic = aaResolved(this, ipr)
             t4rb = ipr.t4rb;
             t4 = sprintf('%s_to_%s_t4', this.sessionData.brainmask('typ','fp'), t4rb.resolveTag);
-            aa = t4rb.t4img_4dfp(t4, mybasename(this.aaFilename), 'options', '-n'); % target is specified by t4rb
-            aa = mlfourd.ImagingContext([aa '.4dfp.hdr']);
-            nn = aa.numericalNiftid;
-            nn.saveas(['aparcAseg_' t4rb.resolveTag '.4dfp.hdr']);
-            ic = mlfourd.ImagingContext(nn);
+            ic = t4rb.t4img_4dfp(t4, mybasename(this.aaFilename), 'options', '-n'); % target is specified by t4rb
+            ic = mlfourd.ImagingContext2([ic '.4dfp.hdr']);
+            ic.saveas(['aparcAseg_' t4rb.resolveTag '.4dfp.hdr']);
         end
         function ic = aaBinarized(~, ic, ipr)
-            nn = ic.numericalNiftid;
-            nn = nn.binarized; % set threshold to intensity floor
-            nn.saveas(['aparcAsegBinarized_' ipr.t4rb.resolveTag '.4dfp.hdr']);
-            ic = mlfourd.ImagingContext(nn);
+            ic = ic.binarized; % set threshold to intensity floor
+            ic.saveas(['aparcAsegBinarized_' ipr.t4rb.resolveTag '.4dfp.hdr']);
         end
     end
     

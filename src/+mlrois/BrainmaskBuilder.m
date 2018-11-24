@@ -32,7 +32,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             ip = inputParser;
             ip.KeepUnmatched = true;
             addParameter(ip, 'cwd', this.tracerLocation, @isdir);
-            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext')); 
+            addParameter(ip, 'tracerIC', [], @(x) isa(x, 'mlfourd.ImagingContext2')); 
             addParameter(ip, 'ignoreFinishMark', false, @islogical);
             parse(ip, varargin{:});
             
@@ -44,7 +44,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             end
             this = this.buildCompositeT4ResolveBuilder(ip.Results);
             if (this.bmbbCacheAvailable(ip.Results))
-                this.product_ = mlfourd.ImagingContext(this.bmbbFilename);
+                this.product_ = mlfourd.ImagingContext2(this.bmbbFilename);
             else
                 this.product_ = this.bmbbResolved;
             end
@@ -120,8 +120,8 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
         end
         function ic = bmbbResolved(this)
             this.ct4rb_ = this.ct4rb_.resolve;
-            bmbb = this.ct4rb_.product{2}; % retain ImagingContext
-            bmbb.numericalNiftid;
+            bmbb = this.ct4rb_.product{2}; % retain ImagingContext2
+            assert(isa(bmbb, 'mlfourd.ImagingContext2'));
             bmbb = bmbb.binarizeBlended;
             bmbb.filename = this.bmbbFilename;
             bmbb.save;
