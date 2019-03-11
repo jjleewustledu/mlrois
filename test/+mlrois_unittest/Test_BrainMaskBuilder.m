@@ -33,7 +33,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             
             cd(this.sessd.tracerLocation);
             this.testObj = this.testObj.buildBrainmaskBinarized( ...
-                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+                'tracerIC', this.sessd.tracerRevisionAvgt('typ', 'mlfourd.ImagingContext'));
             p = this.testObj.product;
             p.view('fdgv1r1_sumt.4dfp.hdr', 'Brainmaskr2_op_fdgv1r1.4dfp.hdr');
         end
@@ -44,7 +44,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             cd(this.sessd.tracerLocation);
             sub = mlrois.AparcAsegBuilder('sessionData', this.sessd);
             sub = sub.buildBrainmaskBinarized( ...
-                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+                'tracerIC', this.sessd.tracerRevisionAvgt('typ', 'mlfourd.ImagingContext'));
             sub = sub.buildAparcAseg('t4rb', sub.ct4rb);
             p = sub.product;
             p.view('fdgv1r1_sumt.4dfp.hdr');
@@ -53,7 +53,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             cd(this.sessd.tracerLocation);
             sub = mlrois.AparcAsegBuilder('sessionData', this.sessd);
             sub = sub.buildBrainmaskBinarized( ...
-                'tracerIC', this.sessd.tracerRevisionSumt('typ', 'mlfourd.ImagingContext'));
+                'tracerIC', this.sessd.tracerRevisionAvgt('typ', 'mlfourd.ImagingContext'));
             sub = sub.buildAparcAsegBinarized('t4rb', sub.ct4rb);
             p = sub.product;
             p.view('fdgv1r1_sumt.4dfp.hdr');
