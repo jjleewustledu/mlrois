@@ -29,7 +29,7 @@ classdef Test_BrainMaskBuilder < matlab.unittest.TestCase
             this.testObj.product.view;
         end
         function test_buildBrainmaskBinarized(this)
-            % See also:  mlpet.TracerDirector.instanceConstructResolvedRois 
+            % See also:  mlsiemens.CommonTracerDirector.instanceConstructResolvedRois 
             
             cd(this.sessd.tracerLocation);
             this.testObj = this.testObj.buildBrainmaskBinarized( ...
