@@ -110,13 +110,13 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
     
     methods (Access = private)
         function tf = brainmaskMissing(this)
-            tf = ~lexist(this.sessionData.brainmask('typ', 'fn.4dfp.hdr'), 'file');
+            tf = ~lexist(this.sessionData.brainmask('typ', '4dfp.hdr'), 'file');
         end
         function tf = bmbbCacheAvailable(this, ipr)
             tf = ~ipr.ignoreFinishMark && lexist(this.bmbbFilename, 'file');
         end
         function fn = bmbbFilename(this)
-            fn = this.sessionData.brainmaskBinarizeBlended('typ', 'fn.4dfp.hdr');
+            fn = this.sessionData.brainmaskBinarizeBlended('typ', '4dfp.hdr');
         end
         function ic = bmbbResolved(this)
             this.ct4rb_ = this.ct4rb_.resolve;

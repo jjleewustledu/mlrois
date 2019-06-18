@@ -90,10 +90,10 @@ classdef AparcAsegBuilder < mlrois.BrainmaskBuilder
         end
         function fn = aaFilename(this)
             fn = this.ensureSafeFileprefix( ...
-                 this.sessionData.aparcAseg('typ', 'fn.4dfp.hdr'));
+                 this.sessionData.aparcAseg('typ', '4dfp.hdr'));
         end
         function fn = aabFilename(this)
-            fn = this.sessionData.aparcAsegBinarized('typ', 'fn.4dfp.hdr');
+            fn = this.sessionData.aparcAsegBinarized('typ', '4dfp.hdr');
         end
         function ic = aaResolved(this, ipr)
             t4rb = ipr.t4rb;
