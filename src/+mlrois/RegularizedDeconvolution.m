@@ -57,7 +57,7 @@ classdef RegularizedDeconvolution < mlrois.DeconvolutionStrategy
             niib.fileprefix = [niib.fileprefix this.suffix];
         end 
         function inplane = psf(this)
-            petps = mlpet.PETBuilder.petPointSpread('dispersion', 'sigma');
+            petps = mlsiemens.ECATRegistry.instance.petPointSpread('dispersion', 'sigma');
             pxls = this.FUDGE * ceil(petps ./ this.niib.mmppix);
             inplane = fspecial('gaussian', pxls(1:2), petps(1));
         end

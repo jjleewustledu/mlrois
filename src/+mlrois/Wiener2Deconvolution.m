@@ -31,7 +31,7 @@ classdef Wiener2Deconvolution < mlrois.DeconvolutionStrategy
             assert(isa(niib, 'mlfourd.NiiBrowser'));
             this.niib = niib;
             this.t1mask = t1msk;
-            petps = mlpet.PETBuilder.petPointSpread('dispersion', 'sigma');
+            petps = mlsiemens.ECATRegistry.instance.petPointSpread('dispersion', 'sigma');
             pxls = this.FUDGE * ceil(petps ./ niib.mmppix);
             noise = cell(1, size(niib,3));
             for z = 1:size(niib,3)
