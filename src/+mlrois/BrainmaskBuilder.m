@@ -88,7 +88,7 @@ classdef BrainmaskBuilder < mlrois.AbstractRoisBuilder
             this.teardown@mlrois.AbstractRoisBuilder(varargin{:});
             ip = inputParser;
             ip.KeepUnmatched = true;
-            addParameter(ip, 'sessionData', this.sessionData, @(x) isa(x, 'mlpipeline.SessionData'));
+            addParameter(ip, 'sessionData', this.sessionData, @(x) isa(x, 'mlpipeline.ISessionData'));
             parse(ip, varargin{:});
             
             %sessd = ip.Results.sessionData;
